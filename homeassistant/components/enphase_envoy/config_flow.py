@@ -37,6 +37,8 @@ from .const import (
     OPTION_DIAGNOSTICS_INCLUDE_FIXTURES_DEFAULT_VALUE,
     OPTION_DISABLE_KEEP_ALIVE,
     OPTION_DISABLE_KEEP_ALIVE_DEFAULT_VALUE,
+    OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES,
+    OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES_DEFAULT_VALUE,
 )
 from .coordinator import EnphaseConfigEntry
 
@@ -463,6 +465,13 @@ class EnvoyOptionsFlowHandler(OptionsFlowWithReload):
                         default=self.config_entry.options.get(
                             OPTION_DISABLE_KEEP_ALIVE,
                             OPTION_DISABLE_KEEP_ALIVE_DEFAULT_VALUE,
+                        ),
+                    ): bool,
+                    vol.Required(
+                        OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES,
+                        default=self.config_entry.options.get(
+                            OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES,
+                            OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES_DEFAULT_VALUE,
                         ),
                     ): bool,
                 }

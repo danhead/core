@@ -9,6 +9,7 @@ from syrupy.assertion import SnapshotAssertion
 
 from homeassistant.components.enphase_envoy.const import (
     DEFAULT_ACB_SLEEP_SOC_BAND,
+    OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES,
     Platform,
 )
 from homeassistant.components.enphase_envoy.select import (
@@ -243,14 +244,29 @@ async def test_update_dry_contact_actions_with_error(
     indirect=["mock_envoy"],
 )
 @pytest.mark.parametrize(("mode"), ["backup", "self_consumption", "savings"])
+@pytest.mark.parametrize(
+    ("options", "disable_opt_schedules"),
+    [
+        pytest.param({}, False, id="default"),
+        pytest.param(
+            {OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES: True},
+            True,
+            id="disable_opt_schedules",
+        ),
+    ],
+)
 async def test_select_storage_modes(
     hass: HomeAssistant,
     mock_envoy: AsyncMock,
     config_entry: MockConfigEntry,
     use_serial: str,
     mode: str,
+    options: dict[str, bool],
+    disable_opt_schedules: bool,
 ) -> None:
     """Test select platform entities storage mode changes."""
+    config_entry.add_to_hass(hass)
+    hass.config_entries.async_update_entry(config_entry, options=options)
     with patch("homeassistant.components.enphase_envoy.PLATFORMS", [Platform.SELECT]):
         await setup_integration(hass, config_entry)
 
@@ -271,7 +287,10 @@ async def test_select_storage_modes(
         },
         blocking=True,
     )
-    mock_envoy.set_storage_mode.assert_called_once_with(REVERSE_STORAGE_MODE_MAP[mode])
+    mock_envoy.set_storage_mode.assert_called_once_with(
+        REVERSE_STORAGE_MODE_MAP[mode],
+        disable_optimized_schedules=disable_opt_schedules,
+    )
 
 
 @pytest.mark.parametrize(

@@ -16,7 +16,12 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from .const import ACB_SLEEP_SOC_BANDS, DOMAIN
+from .const import (
+    ACB_SLEEP_SOC_BANDS,
+    DOMAIN,
+    OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES,
+    OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES_DEFAULT_VALUE,
+)
 from .coordinator import EnphaseConfigEntry, EnphaseUpdateCoordinator
 from .entity import EnvoyACBAggregateControlEntity, EnvoyBaseEntity, exception_handler
 
@@ -38,7 +43,7 @@ class EnvoyStorageSettingsSelectEntityDescription(SelectEntityDescription):
     """Describes an Envoy storage settings select entity."""
 
     value_fn: Callable[[EnvoyStorageSettings], str | None]
-    update_fn: Callable[[Envoy, str], Awaitable[dict[str, Any]]]
+    update_fn: Callable[[Envoy, str, bool], Awaitable[dict[str, Any]]]
 
 
 RELAY_MODE_MAP = {
@@ -121,8 +126,9 @@ STORAGE_MODE_ENTITY = EnvoyStorageSettingsSelectEntityDescription(
     value_fn=lambda storage_settings: (
         None if not storage_settings.mode else STORAGE_MODE_MAP[storage_settings.mode]
     ),
-    update_fn=lambda envoy, value: envoy.set_storage_mode(
-        REVERSE_STORAGE_MODE_MAP[value]
+    update_fn=lambda envoy, value, disable_opt_schedules: envoy.set_storage_mode(
+        REVERSE_STORAGE_MODE_MAP[value],
+        disable_optimized_schedules=disable_opt_schedules,
     ),
 )
 
@@ -268,8 +274,14 @@ class EnvoyStorageSettingsSelectEntity(EnvoyBaseEntity, SelectEntity):
     @exception_handler
     @override
     async def async_select_option(self, option: str) -> None:
-        """Update the relay."""
-        await self.entity_description.update_fn(self.envoy, option)
+        """Update the storage setting."""
+        disable_opt_schedules = self.coordinator.config_entry.options.get(
+            OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES,
+            OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES_DEFAULT_VALUE,
+        )
+        await self.entity_description.update_fn(
+            self.envoy, option, disable_opt_schedules
+        )
         await self.coordinator.async_request_refresh()
 
 

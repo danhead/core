@@ -14,6 +14,8 @@ from homeassistant.components.enphase_envoy.const import (
     OPTION_DIAGNOSTICS_INCLUDE_FIXTURES_DEFAULT_VALUE,
     OPTION_DISABLE_KEEP_ALIVE,
     OPTION_DISABLE_KEEP_ALIVE_DEFAULT_VALUE,
+    OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES,
+    OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES_DEFAULT_VALUE,
 )
 from homeassistant.config_entries import SOURCE_USER, SOURCE_ZEROCONF
 from homeassistant.const import (
@@ -585,6 +587,7 @@ async def test_options_default(
             OPTION_DIAGNOSTICS_INCLUDE_FIXTURES_DEFAULT_VALUE
         ),
         OPTION_DISABLE_KEEP_ALIVE: OPTION_DISABLE_KEEP_ALIVE_DEFAULT_VALUE,
+        OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES: OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES_DEFAULT_VALUE,
     }
 
 
@@ -603,12 +606,14 @@ async def test_options_set(
         user_input={
             OPTION_DIAGNOSTICS_INCLUDE_FIXTURES: True,
             OPTION_DISABLE_KEEP_ALIVE: True,
+            OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES: True,
         },
     )
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert config_entry.options == {
         OPTION_DIAGNOSTICS_INCLUDE_FIXTURES: True,
         OPTION_DISABLE_KEEP_ALIVE: True,
+        OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES: True,
     }
 
 

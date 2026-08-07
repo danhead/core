@@ -16,6 +16,7 @@ from homeassistant.components.enphase_envoy.const import (
     OPERATIONAL_RETRY_TIMEOUT,
     OPTION_DIAGNOSTICS_INCLUDE_FIXTURES,
     OPTION_DISABLE_KEEP_ALIVE,
+    OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES,
     SETUP_RETRY_TIMEOUT,
     Platform,
 )
@@ -552,6 +553,7 @@ async def test_option_change_reload(
         options={
             OPTION_DIAGNOSTICS_INCLUDE_FIXTURES: False,
             OPTION_DISABLE_KEEP_ALIVE: True,
+            OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES: True,
         },
     )
     await hass.async_block_till_done(wait_background_tasks=True)
@@ -559,6 +561,7 @@ async def test_option_change_reload(
     assert config_entry.options == {
         OPTION_DIAGNOSTICS_INCLUDE_FIXTURES: False,
         OPTION_DISABLE_KEEP_ALIVE: True,
+        OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES: True,
     }
     # flip em
     hass.config_entries.async_update_entry(
@@ -566,6 +569,7 @@ async def test_option_change_reload(
         options={
             OPTION_DIAGNOSTICS_INCLUDE_FIXTURES: True,
             OPTION_DISABLE_KEEP_ALIVE: False,
+            OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES: False,
         },
     )
     await hass.async_block_till_done(wait_background_tasks=True)
@@ -573,6 +577,7 @@ async def test_option_change_reload(
     assert config_entry.options == {
         OPTION_DIAGNOSTICS_INCLUDE_FIXTURES: True,
         OPTION_DISABLE_KEEP_ALIVE: False,
+        OPTION_STORAGE_MODE_DISABLE_OPT_SCHEDULES: False,
     }
 
 

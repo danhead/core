@@ -834,11 +834,13 @@
       "init": {
         "data": {
           "diagnostics_include_fixtures": "Include test fixture data in diagnostic report. Use when requested to provide test data for troubleshooting or development activities. With this option enabled the diagnostic report may take more time to download. When report is created best disable this option again.",
-          "disable_keep_alive": "Always use a new connection when requesting data from the Envoy. May resolve communication issues with some Envoy firmwares."
+          "disable_keep_alive": "Always use a new connection when requesting data from the Envoy. May resolve communication issues with some Envoy firmwares.",
+          "storage_mode_disable_opt_schedules": "Disable optimized schedules when changing storage mode. Required on firmware 8.2.42xx and later when optimized schedules are enabled."
         },
         "data_description": {
           "diagnostics_include_fixtures": "Include fixtures in diagnostics report",
-          "disable_keep_alive": "May resolve communication issues with some Envoy firmwares."
+          "disable_keep_alive": "May resolve communication issues with some Envoy firmwares.",
+          "storage_mode_disable_opt_schedules": "On affected firmware, storage mode writes are silently ignored by the battery controller when optimized schedules are active. The Enlighten cloud service may also overwrite locally-set modes within minutes."
         },
         "title": "Envoy {serial} {host} options"
       }
